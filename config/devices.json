@@ -1,0 +1,39 @@
+{
+  "devices": [
+    {
+      "id": "vtubestudio",
+      "type": "VTubeStudioDevice",
+      "config": {
+        "host": "localhost",
+        "port": 8001,
+        "pluginName": "ExhibitionServer",
+        "pluginDeveloper": "Exhibition",
+        "tokenPath": "./config/vts_token.txt"
+      }
+    },
+    {
+      "id": "esp32_main",
+      "type": "ESP32Device",
+      "config": {
+        "ip": "192.168.4.1",
+        "timeout": 200,
+        "throttleMs": 100
+      }
+    },
+    {
+      "id": "audio",
+      "type": "AudioPlayerDevice",
+      "config": {
+        "audioDir": "./public/audio"
+      }
+    },
+    {
+      "id": "camera",
+      "type": "CameraSensorDevice",
+      "config": {
+        "script": "./camera.py",
+        "triggerThreshold": 0.8
+      }
+    }
+  ]
+}

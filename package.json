@@ -1,0 +1,29 @@
+{
+  "name": "exhibition-server",
+  "version": "1.0.0",
+  "description": "展場中控系統 — 統一控制 VTube Studio、ESP32 燈光、音訊、攝像頭及自訂設備",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "start:cloud": "node src/app.js --cloud",
+    "bridge": "node src/bridge.js",
+    "dev": "node --watch src/app.js"
+  },
+  "type": "commonjs",
+  "keywords": [
+    "exhibition",
+    "vtubestudio",
+    "esp32",
+    "iot"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.0",
+    "express": "^4.21.0",
+    "localtunnel": "^2.0.2",
+    "node-wav-player": "^1.0.0",
+    "uuid": "^11.0.0",
+    "ws": "^8.18.0"
+  }
+}

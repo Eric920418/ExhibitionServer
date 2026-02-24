@@ -1,0 +1,12 @@
+services:
+  - type: web
+    runtime: node
+    name: exhibition-server
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/app.js --cloud
+    envVars:
+      - key: CLOUD
+        value: "1"
+      - key: BRIDGE_SECRET
+        generateValue: true

@@ -1,0 +1,4 @@
+node_modules/
+config/vts_token.txt
+*.log
+.env

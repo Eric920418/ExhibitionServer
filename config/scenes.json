@@ -1,0 +1,131 @@
+{
+  "visitor_greeting": {
+    "description": "訪客靠近 — 角色打招呼 + 燈光歡迎",
+    "trigger": {
+      "event": "camera:faceDetected",
+      "condition": { "brightness": ">0.8" }
+    },
+    "actions": [
+      { "device": "vtubestudio", "action": "triggerHotkey", "params": { "name": "開心(睜眼)" } },
+      { "device": "esp32_main", "action": "setMode", "params": { "mode": "ripple", "color": { "r": 255, "g": 200, "b": 120 } } },
+      { "device": "audio", "action": "play", "params": { "file": "welcome.wav" } }
+    ]
+  },
+
+  "play_day_1": {
+    "description": "星期一 — 吃飯動畫 + 紅色閃爍",
+    "actions": [
+      { "device": "vtubestudio", "action": "setExpression", "params": { "file": "吃飯手開關.exp3.json", "active": true } },
+      { "device": "esp32_main", "action": "setMode", "params": { "mode": "random_blocks", "color": { "r": 255, "g": 130, "b": 130 } } },
+      { "device": "audio", "action": "play", "params": { "file": "星期一.wav" } }
+    ]
+  },
+
+  "play_day_2": {
+    "description": "星期二 — 橘色燈光",
+    "actions": [
+      { "device": "esp32_main", "action": "setMode", "params": { "mode": "random_blocks", "color": { "r": 255, "g": 200, "b": 120 } } },
+      { "device": "audio", "action": "play", "params": { "file": "星期二.wav" } }
+    ]
+  },
+
+  "play_day_3": {
+    "description": "星期三 — 黃色波浪",
+    "actions": [
+      { "device": "esp32_main", "action": "setMode", "params": { "mode": "block_wave", "color": { "r": 240, "g": 240, "b": 150 } } },
+      { "device": "audio", "action": "play", "params": { "file": "星期三.wav" } }
+    ]
+  },
+
+  "play_day_4": {
+    "description": "星期四 — 綠色波浪",
+    "actions": [
+      { "device": "esp32_main", "action": "setMode", "params": { "mode": "block_wave", "color": { "r": 150, "g": 230, "b": 180 } } },
+      { "device": "audio", "action": "play", "params": { "file": "星期四.wav" } }
+    ]
+  },
+
+  "play_day_5": {
+    "description": "星期五 — 藍色閃爍",
+    "actions": [
+      { "device": "esp32_main", "action": "flashEffect", "params": { "color": { "r": 130, "g": 190, "b": 255 } } },
+      { "device": "audio", "action": "play", "params": { "file": "星期五.wav" } }
+    ]
+  },
+
+  "play_day_6": {
+    "description": "星期六 — 紫色閃爍",
+    "actions": [
+      { "device": "esp32_main", "action": "flashEffect", "params": { "color": { "r": 180, "g": 160, "b": 255 } } },
+      { "device": "audio", "action": "play", "params": { "file": "星期六日.wav" } }
+    ]
+  },
+
+  "play_day_7": {
+    "description": "星期日 — 粉色漣漪",
+    "actions": [
+      { "device": "esp32_main", "action": "setMode", "params": { "mode": "ripple", "color": { "r": 255, "g": 180, "b": 220 } } },
+      { "device": "audio", "action": "play", "params": { "file": "星期六日.wav" } }
+    ]
+  },
+
+  "vts_surprise": {
+    "description": "VTS 驚訝表情",
+    "actions": [
+      { "device": "vtubestudio", "action": "setExpression", "params": { "file": "驚訝.exp3.json", "active": true, "fadeTime": 0.3 } }
+    ]
+  },
+
+  "vts_angry": {
+    "description": "VTS 生氣表情",
+    "actions": [
+      { "device": "vtubestudio", "action": "setExpression", "params": { "file": "生氣.exp3.json", "active": true, "fadeTime": 0.3 } }
+    ]
+  },
+
+  "vts_sad": {
+    "description": "VTS 哀傷表情",
+    "actions": [
+      { "device": "vtubestudio", "action": "setExpression", "params": { "file": "哀傷.exp3.json", "active": true, "fadeTime": 0.3 } }
+    ]
+  },
+
+  "vts_happy_open": {
+    "description": "VTS 開心(睜眼)表情",
+    "actions": [
+      { "device": "vtubestudio", "action": "setExpression", "params": { "file": "開心(睜眼).exp3.json", "active": true, "fadeTime": 0.3 } }
+    ]
+  },
+
+  "vts_happy_close": {
+    "description": "VTS 開心(閉眼)表情",
+    "actions": [
+      { "device": "vtubestudio", "action": "setExpression", "params": { "file": "開心(閉眼).exp3.json", "active": true, "fadeTime": 0.3 } }
+    ]
+  },
+
+  "vts_eat": {
+    "description": "VTS 吃飯動畫",
+    "actions": [
+      { "device": "vtubestudio", "action": "setExpression", "params": { "file": "吃飯手開關.exp3.json", "active": true } },
+      { "delay": 200 },
+      { "device": "vtubestudio", "action": "triggerHotkey", "params": { "name": "播放動畫(吃飯)" } }
+    ]
+  },
+
+  "vts_idle": {
+    "description": "VTS 待機動畫",
+    "actions": [
+      { "device": "vtubestudio", "action": "triggerHotkey", "params": { "name": "播放動畫(待機)" } }
+    ]
+  },
+
+  "all_off": {
+    "description": "全部關閉 — 燈光關閉、停止播放",
+    "exclusive": false,
+    "actions": [
+      { "device": "esp32_main", "action": "off", "params": {} },
+      { "device": "audio", "action": "stop", "params": {} }
+    ]
+  }
+}

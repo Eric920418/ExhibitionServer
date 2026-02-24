@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展場中控系統</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242836;
+      --border: #2e3345;
+      --text: #e4e6f0;
+      --text-dim: #8b8fa3;
+      --accent: #6c5ce7;
+      --accent-glow: rgba(108, 92, 231, 0.25);
+      --green: #00d68f;
+      --red: #ff6b6b;
+      --orange: #ffa502;
+      --blue: #4da6ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    header .conn-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .conn-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      transition: background 0.3s;
+    }
+    .conn-dot.connected { background: var(--green); }
+
+    .main {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      grid-template-rows: 1fr 260px;
+      gap: 1px;
+      height: calc(100vh - 57px);
+      background: var(--border);
+    }
+
+    .panel {
+      background: var(--surface);
+      overflow-y: auto;
+    }
+
+    .panel-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+      padding: 16px 16px 8px;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      z-index: 1;
+    }
+
+    /* ---- 裝置面板 ---- */
+    .device-list { padding: 0 12px 12px; }
+
+    .device-card {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .device-card:hover { border-color: var(--accent); }
+
+    .device-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .device-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .device-type {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .status-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .status-badge.online { background: rgba(0,214,143,0.15); color: var(--green); }
+    .status-badge.offline { background: rgba(255,107,107,0.15); color: var(--red); }
+    .status-badge.connecting { background: rgba(255,165,2,0.15); color: var(--orange); }
+    .status-badge.error { background: rgba(255,107,107,0.15); color: var(--red); }
+
+    /* ---- 場景面板（中央） ---- */
+    .scenes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      padding: 0 16px 16px;
+    }
+
+    .scene-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .scene-btn:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+      transform: translateY(-1px);
+    }
+    .scene-btn:active { transform: scale(0.98); }
+
+    .scene-btn .name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .scene-btn .desc {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .scene-btn .meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      opacity: 0.6;
+    }
+
+    .scene-group-title {
+      padding: 8px 16px 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* ---- VTS 控制面板（右側） ---- */
+    .vts-panel { grid-row: 1 / 2; }
+
+    .vts-section {
+      padding: 8px 16px;
+    }
+
+    .vts-section h4 {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .vts-btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .vts-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .vts-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .vts-model-pos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .vts-model-pos label {
+      font-size: 11px;
+      color: var(--text-dim);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .vts-model-pos input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .vts-move-btn {
+      grid-column: 1 / -1;
+      margin-top: 4px;
+    }
+
+    /* ---- 事件日誌面板（底部） ---- */
+    .log-panel {
+      grid-column: 1 / -1;
+    }
+
+    .log-entries {
+      padding: 0 16px 16px;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      font-size: 12px;
+    }
+
+    .log-entry {
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(46,51,69,0.5);
+      display: flex;
+      gap: 12px;
+    }
+
+    .log-time {
+      color: var(--text-dim);
+      flex-shrink: 0;
+      width: 80px;
+    }
+
+    .log-event {
+      color: var(--blue);
+      flex-shrink: 0;
+      min-width: 180px;
+    }
+
+    .log-data {
+      color: var(--text-dim);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* 通知 toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 響應式 */
+    @media (max-width: 1024px) {
+      .main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .panel { min-height: 200px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Exhibition Control Server</h1>
+    <div class="conn-status">
+      <div class="conn-dot" id="bridgeDot" style="display:none" title="Bridge"></div>
+      <span id="bridgeText" style="display:none;margin-right:12px">Bridge</span>
+      <div class="conn-dot" id="connDot"></div>
+      <span id="connText">Disconnected</span>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- 左側：裝置列表 -->
+    <div class="panel" id="devicePanel">
+      <div class="panel-title">Devices</div>
+      <div class="device-list" id="deviceList"></div>
+    </div>
+
+    <!-- 中央：場景控制 -->
+    <div class="panel" id="scenePanel">
+      <div class="panel-title">Scenes</div>
+      <div id="sceneContainer"></div>
+    </div>
+
+    <!-- 右側：VTS 控制 -->
+    <div class="panel vts-panel">
+      <div class="panel-title">VTube Studio</div>
+
+      <div class="vts-section">
+        <h4>Expressions</h4>
+        <div class="vts-btn-group">
+          <button class="vts-btn" onclick="vtsExpression('驚訝.exp3.json')">驚訝</button>
+          <button class="vts-btn" onclick="vtsExpression('生氣.exp3.json')">生氣</button>
+          <button class="vts-btn" onclick="vtsExpression('哀傷.exp3.json')">哀傷</button>
+          <button class="vts-btn" onclick="vtsExpression('開心(睜眼).exp3.json')">開心(睜眼)</button>
+          <button class="vts-btn" onclick="vtsExpression('開心(閉眼).exp3.json')">開心(閉眼)</button>
+          <button class="vts-btn" onclick="vtsExpression('更換衣服.exp3.json')">更換衣服</button>
+          <button class="vts-btn" onclick="vtsExpression('吃飯手開關.exp3.json')">吃飯手開關</button>
+        </div>
+      </div>
+
+      <div class="vts-section">
+        <h4>Animations</h4>
+        <div class="vts-btn-group">
+          <button class="vts-btn" onclick="vtsHotkey('播放動畫(吃飯)')">吃飯</button>
+          <button class="vts-btn" onclick="vtsHotkey('播放動畫(不吃)')">不吃</button>
+          <button class="vts-btn" onclick="vtsHotkey('播放動畫(待機)')">待機</button>
+          <button class="vts-btn" onclick="vtsHotkey('取消動作')">取消動作</button>
+        </div>
+      </div>
+
+      <div class="vts-section">
+        <h4>Move Model</h4>
+        <div class="vts-model-pos">
+          <div><label>X</label><input type="number" id="vtsPosX" value="0" step="0.1"></div>
+          <div><label>Y</label><input type="number" id="vtsPosY" value="0" step="0.1"></div>
+          <div><label>Rotation</label><input type="number" id="vtsRot" value="0" step="1"></div>
+          <div><label>Size</label><input type="number" id="vtsSize" value="0" step="1"></div>
+          <button class="vts-btn vts-move-btn" onclick="vtsMoveModel()">Move</button>
+        </div>
+      </div>
+
+      <div class="vts-section">
+        <h4>Tint Model</h4>
+        <div class="vts-btn-group">
+          <input type="color" id="vtsTintColor" value="#ffffff" style="width:36px;height:28px;border:none;background:none;cursor:pointer;">
+          <button class="vts-btn" onclick="vtsTint()">Apply Tint</button>
+          <button class="vts-btn" onclick="vtsTintReset()">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部：事件日誌 -->
+    <div class="panel log-panel">
+      <div class="panel-title">Event Log</div>
+      <div class="log-entries" id="logEntries"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
