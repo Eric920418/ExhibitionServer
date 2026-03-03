@@ -229,6 +229,25 @@
     });
   };
 
+  // ---- 日立 modal ----
+  const hitachiOverlay = document.getElementById("hitachiOverlay");
+
+  window.showHitachi = function () {
+    hitachiOverlay.classList.add("show");
+  };
+
+  window.closeHitachi = function (e) {
+    if (e.target === hitachiOverlay || e.target.classList.contains("hitachi-close")) {
+      hitachiOverlay.classList.remove("show");
+    }
+  };
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && hitachiOverlay.classList.contains("show")) {
+      hitachiOverlay.classList.remove("show");
+    }
+  });
+
   function executeDevice(deviceId, action, params) {
     if (ws?.readyState !== 1) return showToast("WebSocket not connected");
     ws.send(JSON.stringify({
